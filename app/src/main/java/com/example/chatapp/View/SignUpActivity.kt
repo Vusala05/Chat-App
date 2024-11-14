@@ -61,7 +61,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    fun signUp(view: View) {
+     fun signUp(view: View) {
         val uuid = UUID.randomUUID()
         val imageName = "$uuid.jpg"
         val reference = storage.reference
