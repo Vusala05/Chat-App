@@ -44,12 +44,14 @@ class SignInActivity : AppCompatActivity() {
     }
 
     fun signIn(view: View) {
+
         val passwordSign = binding.password.text.toString()
         val emailSign = binding.email.text.toString()
 
         if (passwordSign.isNotEmpty()  && emailSign.isNotEmpty()){
                 auth.signInWithEmailAndPassword(emailSign,passwordSign).addOnSuccessListener {
                     val intent = Intent(this, HomeActivity::class.java)
+
                         startActivity(intent)
                         finish()
 

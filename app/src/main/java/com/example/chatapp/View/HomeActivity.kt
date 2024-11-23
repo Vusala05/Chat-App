@@ -40,16 +40,16 @@ class HomeActivity : AppCompatActivity() {
         }
         auth = Firebase.auth
         db = Firebase.firestore
+
         if(auth.currentUser != null) {
+            getName()
             getData()
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         userAdapter = UserAdapter(userList,true)
         binding.recyclerView.adapter = userAdapter
+    }
 
-
-
-     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
          menuInflater.inflate(R.menu.menu,menu)
@@ -63,6 +63,20 @@ class HomeActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+    private fun getName(){
+        val currentUser = auth.currentUser?.uid
+        if(currentUser != null){
+            db.collection("Users").document(currentUser).get().addOnSuccessListener { document ->
+
+                if(document !=null){
+                    val name = document.getString("name")
+                    supportActionBar?.title = name
+                }
+            }
+        }
+
+    }
+
 
     @SuppressLint("NotifyDataSetChanged")
 
@@ -78,8 +92,9 @@ class HomeActivity : AppCompatActivity() {
                         val name = document.getString("name")
                         val uid = document.getString("uid")
                         val url = document.getString("url")
+                        val status = document.getString("status") ?: "offline"
                         if (name != null && uid != null && url!=null) {
-                            val user = User(name, uid, url)
+                            val user = User(name, uid, url, status)
                             if(auth.currentUser?.uid != user.uuid) {
                                 userList.add(user)
                             }
@@ -91,6 +106,27 @@ class HomeActivity : AppCompatActivity() {
         }
 
     }
+    private fun getStatus( status:String){
+        val reference = FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+        val user= hashMapOf<String,Any>()
+        user["status"] = status
+        reference.update(user).addOnSuccessListener {
+            Toast.makeText(this,"Status updated!!",Toast.LENGTH_LONG).show()
+        }.addOnFailureListener {
+            Toast.makeText(this,"Status can not be updated!!",Toast.LENGTH_LONG).show()
+        }
+
+    }
+    override fun onResume() {
+        super.onResume()
+        getStatus("online")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        getStatus("offline")
+    }
+
 
 }
 

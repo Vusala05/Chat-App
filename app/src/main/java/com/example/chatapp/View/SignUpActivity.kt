@@ -84,8 +84,9 @@ class SignUpActivity : AppCompatActivity() {
                                 user["uid"] = auth.currentUser!!.uid
                                 user["url"] = downloadUrl
 
-                                firebasefirestore.collection("Users").add(user).addOnSuccessListener {
+                                firebasefirestore.collection("Users").document(auth.currentUser!!.uid).set(user).addOnSuccessListener {
                                     val intent = Intent(this, HomeActivity::class.java)
+                                     intent.putExtra("userName", name)
                                     startActivity(intent)
                                     finish()
                                 }.addOnFailureListener { result->

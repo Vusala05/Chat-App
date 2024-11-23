@@ -27,6 +27,7 @@ class MessageAdapter(val context: Context,private val messageList: ArrayList<Mes
          }
     }
 
+
     override fun getItemViewType(position: Int): Int {
 
         val currentMessage = messageList[position]
